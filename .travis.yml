@@ -12,7 +12,7 @@ sudo: required
 dist: trusty
 group: deprecated-2017Q2
 stages:
-  - "build only"
+  - "test"
   - test
 env:
   global:
@@ -67,6 +67,7 @@ cache:
                 - $HOME/doxygen-install
 
 env:
+        - DPDK_SHARED="y"
         - CONF=""
         - CONF="--disable-abi-compat"
         - CONF="--enable-deprecated"
@@ -234,6 +235,7 @@ install:
            fi
            EXTRA_CONF="$EXTRA_CONF --with-dpdk-path=`pwd`/dpdk/${TARGET}"
           fi
+        - find dpdk/${TARGET}/lib -type f
 
 #	Netmap pktio
         - |
@@ -268,6 +270,7 @@ script:
         - echo "Dynamic link.."
         - ${CC} ${CFLAGS} ${OLDPWD}/example/hello/odp_hello.c -o odp_hello_inst_dynamic `PKG_CONFIG_PATH=${HOME}/odp-install/lib/pkgconfig:${PKG_CONFIG_PATH} pkg-config --cflags --libs libodp-linux`
         - if [ -z "$CROSS_ARCH" ] ; then
+            LD_LIBRARY_PATH="${HOME}/odp-install/lib:$LD_LIBRARY_PATH" ldd ./odp_hello_inst_dynamic ;
             LD_LIBRARY_PATH="${HOME}/odp-install/lib:$LD_LIBRARY_PATH" ./odp_hello_inst_dynamic ;
           fi
         - echo "Static link.."
@@ -316,7 +319,7 @@ jobs:
                           - ./configure --prefix=$HOME/odp-install
                             --enable-user-guides
                           - sudo PATH="$PATH" LD_LIBRARY_PATH="$HOME/cunit-install/$CROSS_ARCH/lib:$LD_LIBRARY_PATH" make distcheck DISTCHECK__CONFIGURE_FLAGS=--disable-abi-compat
-                - stage: "build only"
+                - stage: "test"
                   env: TEST=doxygen
                   compiler: gcc
                   install:
@@ -353,7 +356,7 @@ jobs:
                           - echo ${TRAVIS_COMMIT_RANGE};
                           - ODP_PATCHES=`echo ${TRAVIS_COMMIT_RANGE} | sed 's/\.//'`;
                           - ./scripts/ci-checkpatches.sh ${ODP_PATCHES};
-                - stage: "build only"
+                - stage: "test"
                   env: CONF=""
                   compiler: gcc
                   install: true
@@ -361,7 +364,7 @@ jobs:
                           - ./bootstrap
                           - ./configure --enable-helper-linux
                           - make -j $(nproc)
-                - stage: "build only"
+                - stage: "test"
                   env: CONF=""
                   compiler: clang-3.8
                   install: true
@@ -369,7 +372,7 @@ jobs:
                           - ./bootstrap
                           - ./configure --enable-helper-linux
                           - make -j $(nproc)
-                - stage: "build only"
+                - stage: "test"
                   env: CROSS_ARCH="i386"
                   compiler: gcc
                   install: true
@@ -377,7 +380,7 @@ jobs:
                           - ./bootstrap
                           - ./configure --enable-helper-linux $CROSS
                           - make -j $(nproc)
-                - stage: "build only"
+                - stage: "test"
                   env: CROSS_ARCH="arm64"
                   compiler: gcc
                   install: true
