@@ -26,6 +26,11 @@ AS_IF([test "x$DPDK_SHARED" = "xyes"], [dnl
     DPDK_LIBS="$DPDK_LDFLAGS $DPDK_RPATH $DPDK_LIBS"
     # link libodp-linux with -ldpdk
     DPDK_LIBS_LIBODP="$DPDK_LDFLAGS $DPDK_LIBS"
+    AX_CHECK_COMPILE_FLAG([-fuse-ld=bfd],
+			  [DPDK_LIBS_LIBODP="$DPDK_LIBS_LIBODP -fuse-ld=bfd"],
+			  [], [],
+			  [AC_LANG_SOURCE([int main(void)
+					   {return 0;}])])
 ], [dnl
     ODP_DPDK_PMDS([$DPDK_PMD_PATH])
     # build long list of libraries for applications, which should not be
