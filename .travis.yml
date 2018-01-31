@@ -11,9 +11,6 @@ language: c
 sudo: required
 dist: trusty
 group: deprecated-2017Q2
-stages:
-  - "build only"
-  - test
 
 addons:
         apt:
@@ -266,98 +263,6 @@ script:
 
 jobs:
         include:
-                - stage: test
-                  env: TEST=coverage
-                  compiler: gcc
-                  script:
-                          - sudo pip install coverage
-                          - ./bootstrap
-                          - ./configure --prefix=$HOME/odp-install
-                            --enable-user-guides
-                            --with-dpdk-path=`pwd`/dpdk/${TARGET}
-                            --with-netmap-path=`pwd`/netmap CFLAGS="-O0 -coverage"
-                              CXXFLAGS="-O0 -coverage" LDFLAGS="--coverage"
-                            --enable-debug=full
-                            --enable-helper-linux
-                          - CCACHE_DISABLE=1 make -j $(nproc)
-                          - sudo CCACHE_DISABLE=1 LD_LIBRARY_PATH="$HOME/cunit-install/$CROSS_ARCH/lib:$LD_LIBRARY_PATH" PATH=${PATH//:\.\/node_modules\/\.bin/} make check
-                          - find . -type f -iname '*.[ch]' -not -path ".git/*" -execdir gcov {} \; ; bash <(curl -s https://codecov.io/bash) -X coveragepy
-                - stage: test
-                  env: TEST=distcheck
-                  compiler: gcc
-                  script:
-                          - ./bootstrap
-                          - ./configure --prefix=$HOME/odp-install
-                            --enable-user-guides
-                          - sudo PATH="$PATH" LD_LIBRARY_PATH="$HOME/cunit-install/$CROSS_ARCH/lib:$LD_LIBRARY_PATH" make distcheck
-                - stage: test
-                  env: TEST=distcheck-non-abi
-                  compiler: gcc
-                  script:
-                          - ./bootstrap
-                          - ./configure --prefix=$HOME/odp-install
-                            --enable-user-guides
-                          - sudo PATH="$PATH" LD_LIBRARY_PATH="$HOME/cunit-install/$CROSS_ARCH/lib:$LD_LIBRARY_PATH" make distcheck DISTCHECK__CONFIGURE_FLAGS=--disable-abi-compat
-                - stage: "build only"
-                  env: TEST=doxygen
-                  compiler: gcc
-                  install:
-                          # Updated Doxygen
-                        - |
-                          if [ ! -f "$HOME/doxygen-install/bin/doxygen" ]; then
-                                wget https://github.com/doxygen/doxygen/archive/Release_1_8_13.tar.gz
-                                tar xpvf Release_1_8_13.tar.gz
-                                pushd doxygen-Release_1_8_13
-                                cmake -DCMAKE_INSTALL_PREFIX=$HOME/doxygen-install .
-                                make -j $(nproc)
-                                make install
-                                popd
-                          fi
-                        - export PATH=$HOME/doxygen-install/bin:$PATH
-                  script:
-                          - ./bootstrap
-                          - ./configure
-                          # doxygen does not trap on warnings, check for them here.
-                          - make doxygen-doc 2>&1 |tee doxygen.log
-                          - |
-                             fgrep -rq warning ./doxygen.log
-                             if [ $? -eq 0 ]; then
-                               false
-                             else
-                               true
-                             fi
-                - stage: "build only"
-                  env: CONF=""
-                  compiler: gcc
-                  install: true
-                  script:
-                          - ./bootstrap
-                          - ./configure --enable-helper-linux
-                          - make -j $(nproc)
-                - stage: "build only"
-                  env: CONF=""
-                  compiler: clang-3.8
-                  install: true
-                  script:
-                          - ./bootstrap
-                          - ./configure --enable-helper-linux
-                          - make -j $(nproc)
-                - stage: "build only"
-                  env: CROSS_ARCH="i386"
-                  compiler: gcc
-                  install: true
-                  script:
-                          - ./bootstrap
-                          - ./configure --enable-helper-linux $CROSS
-                          - make -j $(nproc)
-                - stage: "build only"
-                  env: CROSS_ARCH="arm64"
-                  compiler: gcc
-                  install: true
-                  script:
-                          - ./bootstrap
-                          - ./configure --enable-helper-linux $CROSS
-                          - make -j $(nproc)
                 - stage: test
                   compiler: gcc
                   env: CROSS_ARCH="arm64"
