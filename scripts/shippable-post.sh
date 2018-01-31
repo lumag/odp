@@ -7,3 +7,6 @@ for FILE in `find  ./test ./platform/ -name  "*.xml"`; do
 	xsltproc --novalid cunit-to-junit.xsl "$FILE" > \
 		"$SHIPPABLE_BUILD_DIR/shippable/testresults/${bname}"
 done
+
+mkdir -p shippable/codecoverage
+gcovr -r . --xml-pretty --exclude 'test/|.*/test/|example/' -o shippable/codecoverage/coverage.xml
