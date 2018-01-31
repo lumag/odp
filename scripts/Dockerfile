@@ -10,6 +10,7 @@ RUN sudo apt-get update && sudo apt-get install -yy \
   ccache \
   clang-3.8 \
   gcc-4.8 \
+  gcovr \
   graphviz \
   kmod \
   libconfig-dev \
