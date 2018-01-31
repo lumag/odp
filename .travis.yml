@@ -50,13 +50,6 @@ env:
         - DPDK_VERS="17.08"
     matrix:
         - CONF=""
-        - CONF="--disable-abi-compat"
-        - CONF="--enable-deprecated"
-        - CONF="--enable-schedule-sp"
-        - CONF="--enable-schedule-iquery"
-        - CONF="--enable-schedule-scalable"
-        - CONF="--enable-dpdk-zero-copy"
-        - CONF="--disable-static-applications"
         - DPDK_SHARED="y" CONF="--disable-static-applications"
 
 compiler:
