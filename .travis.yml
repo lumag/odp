@@ -93,6 +93,7 @@ before_install:
                                 DPDK_CFLAGS="--target=$CROSS_GNU_TYPE" ;
                         fi
                 fi ;
+                DPDK_CROSS="$CROSS_GNU_TYPE-" ;
                 export CXX="${CC/clang/clang++}";
           elif [ "$CROSS_ARCH" = "i386" ] ;
           then
