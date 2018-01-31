@@ -207,7 +207,7 @@ install:
             sed -ri -e '/CONFIG_RTE_TOOLCHAIN_.*/d' .config
             echo CONFIG_RTE_TOOLCHAIN_${DPDKCC^^}=y >> .config
             popd
-            make build O=${TARGET} EXTRA_CFLAGS="-fPIC $DPDK_CFLAGS" CROSS="$DPDK_CROSS" CC="$CC" -j $(nproc) || exit 1
+            make build O=${TARGET} EXTRA_CFLAGS="-fPIC $DPDK_CFLAGS" CROSS="$DPDK_CROSS" CC="$CC" HOSTCC=gcc -j $(nproc) || exit 1
             rm -r ./doc ./${TARGET}/app ./${TARGET}/build
             popd
            fi
