@@ -150,7 +150,8 @@ int odp_thread_init_local(odp_thread_type_t type)
 
 	if (cpu < 0) {
 		ODP_ERR("getcpu failed\n");
-		return -1;
+		//return -1;
+		cpu = 0;
 	}
 
 	thread_globals->thr[id].thr  = id;
