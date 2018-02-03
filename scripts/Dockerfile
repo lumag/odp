@@ -22,6 +22,7 @@ RUN sudo apt-get update && sudo apt-get install -yy \
   linux-headers-`uname -r` \
   mscgen \
   ruby-dev \
+  valgrind \
   xsltproc
 
 RUN sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10
