@@ -11,7 +11,7 @@ endif
 
 AM_CFLAGS = \
 	-I$(srcdir) \
-	-I$(top_srcdir)/example \
+	-I$(abs_top_srcdir)/example \
 	$(ODP_INCLUDES) \
 	$(HELPER_INCLUDES)
 

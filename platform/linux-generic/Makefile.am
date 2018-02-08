@@ -4,10 +4,10 @@
 include $(top_srcdir)/platform/Makefile.inc
 
 AM_CPPFLAGS  =  $(ODP_INCLUDES)
-AM_CPPFLAGS +=  -I$(top_srcdir)/platform/$(with_platform)/include
-AM_CPPFLAGS +=  -I$(top_srcdir)/platform/$(with_platform)/arch
-AM_CPPFLAGS +=  -I$(top_srcdir)/platform/$(with_platform)/arch/@ARCH_DIR@
-AM_CPPFLAGS +=  -I$(top_srcdir)/platform/$(with_platform)/arch/default
+AM_CPPFLAGS +=  -I$(abs_top_srcdir)/platform/$(with_platform)/include
+AM_CPPFLAGS +=  -I$(abs_top_srcdir)/platform/$(with_platform)/arch
+AM_CPPFLAGS +=  -I$(abs_top_srcdir)/platform/$(with_platform)/arch/@ARCH_DIR@
+AM_CPPFLAGS +=  -I$(abs_top_srcdir)/platform/$(with_platform)/arch/default
 
 AM_CPPFLAGS +=  $(OPENSSL_CPPFLAGS)
 AM_CPPFLAGS +=  $(DPDK_CPPFLAGS)

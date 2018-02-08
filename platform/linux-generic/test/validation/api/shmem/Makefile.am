@@ -5,7 +5,7 @@ test_PROGRAMS = shmem_linux shmem_odp1 shmem_odp2
 
 #shmem_linux is stand alone, pure linux (no ODP):
 shmem_linux_SOURCES = shmem_linux.c shmem_linux.h shmem_common.h
-shmem_linux_CFLAGS = $(AM_CFLAGS) -I$(top_builddir)/include
+shmem_linux_CFLAGS = $(AM_CFLAGS) -I$(abs_top_builddir)/include
 shmem_linux_LDFLAGS = $(AM_LDFLAGS) -lrt
 shmem_linux_LDADD =
 

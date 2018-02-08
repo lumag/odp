@@ -14,7 +14,7 @@ TESTS = ring_main$(EXEEXT)
 
 PRELDADD += $(LIBCUNIT_COMMON)
 
-AM_CPPFLAGS += -I$(top_srcdir)/platform/linux-generic/include
+AM_CPPFLAGS += -I$(abs_top_srcdir)/platform/linux-generic/include
 
 TESTNAME = linux-generic-ring
 

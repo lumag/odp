@@ -17,7 +17,7 @@ PRELDADD =
 AM_CPPFLAGS = \
 	$(ODP_INCLUDES) \
 	$(HELPER_INCLUDES) \
-	-I$(top_srcdir)/test/common
+	-I$(abs_top_srcdir)/test/common
 
 # Do not link to DPDK twice in case of dynamic linking with ODP
 if STATIC_APPS
