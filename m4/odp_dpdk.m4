@@ -4,6 +4,7 @@
 # Updated DPDK_LIBS to include dependencies.
 AC_DEFUN([ODP_DPDK_PMDS], [dnl
 AS_VAR_SET([DPDK_PMDS], ["-Wl,--whole-archive,"])
+AC_MSG_NOTICE([Looking for DPDK PMDs at $1])
 for filename in "$1"/librte_pmd_*.a; do
 cur_driver=`basename "$filename" .a | sed -e 's/^lib//'`
 
