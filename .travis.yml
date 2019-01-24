@@ -16,9 +16,6 @@
 language: c
 sudo: required
 dist: trusty
-stages:
-  - "build only"
-  - test
 
 #addons:
 #        coverity_scan:
@@ -50,34 +47,6 @@ env:
         - OS="ubuntu_16.04"
         - CHECK=1
         - NETMAP=0
-    matrix:
-        - CONF=""
-        - CONF="--disable-abi-compat"
-        - NETMAP=1 CONF=""
-        - CHECK=0 ARCH="arm64"
-        - CHECK=0 ARCH="armhf"
-        - CHECK=0 ARCH="powerpc"
-        - CHECK=0 ARCH="i386"
-        - CHECK=0 ARCH="arm64" CONF="--disable-abi-compat"
-        - CHECK=0 ARCH="armhf" CONF="--disable-abi-compat"
-        - CHECK=0 ARCH="powerpc" CONF="--disable-abi-compat"
-        - CHECK=0 ARCH="i386" CONF="--disable-abi-compat"
-        - CONF="--enable-deprecated"
-        - CONF="--enable-dpdk-zero-copy --disable-static-applications"
-        - NETMAP=1 CONF="--disable-static-applications"
-        - CONF="--disable-host-optimization"
-        - CONF="--disable-host-optimization --disable-abi-compat"
-        - CHECK=0 ARCH="x86_64" CONF="--enable-pcapng-support"
-        - CHECK=0 ARCH="x86_64" OS="centos_7"
-        - CONF="--without-openssl"
-        - OS="ubuntu_18.04"
-
-matrix:
-  exclude:
-  - compiler: gcc
-    env: CHECK=0 ARCH="arm64"
-  - compiler: gcc
-    env: CHECK=0 ARCH="i386"
 
 install:
         - if [ ${NETMAP} -eq 1 ] ; then
@@ -109,6 +78,18 @@ script:
           fi
 jobs:
         include:
+                - stage: test
+                  env: TEST=dpdk_18.11
+                  install:
+                          - true
+                  compiler: gcc
+                  script:
+                          - if [ -z "${DOCKER_NAMESPACE}" ] ; then export DOCKER_NAMESPACE="opendataplane"; fi
+                          - docker run --privileged -i -t
+                              -v `pwd`:/odp --shm-size 8g
+                              -e CC="${CC}"
+                              -e CONF=""
+                              ${DOCKER_NAMESPACE}/travis-odp-lng-ubuntu_16.04-dpdk_18.11 /odp/scripts/ci/check.sh
                 - stage: test
                   env: TEST=coverage
                   compiler: gcc
@@ -156,18 +137,6 @@ jobs:
                               -e ODPH_PROC_MODE=1
                               ${DOCKER_NAMESPACE}/travis-odp-lng-ubuntu_16.04 /odp/scripts/ci/check.sh
                 - stage: test
-                  env: TEST=dpdk_18.11
-                  install:
-                          - true
-                  compiler: gcc
-                  script:
-                          - if [ -z "${DOCKER_NAMESPACE}" ] ; then export DOCKER_NAMESPACE="opendataplane"; fi
-                          - docker run --privileged -i -t
-                              -v `pwd`:/odp --shm-size 8g
-                              -e CC="${CC}"
-                              -e CONF=""
-                              ${DOCKER_NAMESPACE}/travis-odp-lng-ubuntu_16.04-dpdk_18.11 /odp/scripts/ci/check.sh
-                - stage: test
                   env: TEST=inline_timer
                   install:
                           - true
@@ -200,7 +169,7 @@ jobs:
                               -e CC="${CC}"
                               -e CONF="--enable-user-guides --disable-abi-compat"
                               ${DOCKER_NAMESPACE}/travis-odp-lng-ubuntu_16.04 /odp/scripts/ci/distcheck.sh
-                - stage: "build only"
+                - stage: test
                   env: TEST=doxygen
                   compiler: gcc
                   addons:
@@ -235,7 +204,7 @@ jobs:
                              else
                                true
                              fi
-                - stage: "build only"
+                - stage: test
                   env: ARCH=x86_64
                   install:
                           - true
@@ -244,7 +213,7 @@ jobs:
                           - docker run -i -t -v `pwd`:/odp --shm-size 8g
                               -e CC="${CC}"
                               ${DOCKER_NAMESPACE}/travis-odp-lng-ubuntu_16.04 /odp/scripts/ci/build_${ARCH}.sh
-                - stage: "build only"
+                - stage: test
                   env: ARCH=x86_64
                   compiler: clang
                   install:
@@ -254,7 +223,7 @@ jobs:
                           - docker run -i -t -v `pwd`:/odp --shm-size 8g
                               -e CC="${CC}"
                               ${DOCKER_NAMESPACE}/travis-odp-lng-ubuntu_16.04 /odp/scripts/ci/build_${ARCH}.sh
-                - stage: "build only"
+                - stage: test
                   env: ARCH=arm64
                   install:
                           - true
@@ -263,7 +232,7 @@ jobs:
                           - docker run -i -t -v `pwd`:/odp
                               -e CC="${CC}"
                               ${DOCKER_NAMESPACE}/travis-odp-lng-ubuntu_16.04 /odp/scripts/ci/build_${ARCH}.sh
-                - stage: "build only"
+                - stage: test
                   env: ARCH=i386
                   install:
                           - true
