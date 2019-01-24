@@ -135,8 +135,6 @@ AC_DEFUN([_ODP_DPDK_LEGACY_SYSTEM], [dnl
     DPDK_CFLAGS="-isystem /usr/include/dpdk"
     DPDK_LDFLAGS=""
     DPDK_LIB_PATH="`$CC $CFLAGS $LDFLAGS --print-file-name=libdpdk.so`"
-    DPDK_PMD_PATH="$DPDK_LIB_PATH"
-    DPDK_PKG=""
     if test "$DPDK_LIB_PATH" = "libdpdk.so" ; then
 	DPDK_LIB_PATH="`$CC $CFLAGS $LDFLAGS --print-file-name=libdpdk.a`"
         AS_IF([test "$DPDK_LIB_PATH" = "libdpdk.a"],
@@ -145,10 +143,12 @@ AC_DEFUN([_ODP_DPDK_LEGACY_SYSTEM], [dnl
 	DPDK_SHARED=yes
     fi
     DPDK_LIB_PATH=`AS_DIRNAME(["$DPDK_LIB_PATH"])`
+    DPDK_PMD_PATH="$DPDK_LIB_PATH"
     AS_IF([test "x$DPDK_SHARED" = "xyes"],
 	    [AC_MSG_NOTICE([Using shared DPDK library found at $DPDK_LIB_PATH])],
 	    [AC_MSG_NOTICE([Using static DPDK library found at $DPDK_LIB_PATH])])
     _ODP_DPDK_CHECK([$DPDK_CFLAGS], [$DPDK_LDFLAGS], [$1], [$2])
+    DPDK_PKG=""
     AC_SUBST([DPDK_PKG])
 ])
 
@@ -159,18 +159,18 @@ AC_DEFUN([_ODP_DPDK_LEGACY], [dnl
     DPDK_CFLAGS="-isystem $1/include/dpdk"
     DPDK_LIB_PATH="$1/lib"
     DPDK_LDFLAGS="-L$DPDK_LIB_PATH"
-    DPDK_PMD_PATH="$DPDK_LIB_PATH"
-    DPDK_PKG=""
     AS_IF([test -r "$DPDK_LIB_PATH"/libdpdk.so], [dnl
 	DPDK_RPATH="-Wl,-rpath,$DPDK_LIB_PATH"
 	DPDK_RPATH_LT="-R$DPDK_LIB_PATH"
 	DPDK_SHARED=yes],
 	[test ! -r "$DPDK_LIB_PATH"/libdpdk.a], [dnl
         AC_MSG_FAILURE([Could not find DPDK])])
+    DPDK_PMD_PATH="$DPDK_LIB_PATH"
     AS_IF([test "x$DPDK_SHARED" = "xyes"],
 	    [AC_MSG_NOTICE([Using shared DPDK library found at $DPDK_LIB_PATH])],
 	    [AC_MSG_NOTICE([Using static DPDK library found at $DPDK_LIB_PATH])])
     _ODP_DPDK_CHECK([$DPDK_CFLAGS], [$DPDK_LDFLAGS], [$2], [$3])
+    DPDK_PKG=""
     AC_SUBST([DPDK_PKG])
 ])
 
